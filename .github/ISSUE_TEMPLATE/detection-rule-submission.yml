@@ -1,0 +1,102 @@
+name: Detection Rule Submission
+description: Submit a new detection rule for the FLAME detection pack
+title: "[Detection] "
+labels: ["detection-rule", "triage"]
+body:
+  - type: input
+    id: rule-title
+    attributes:
+      label: Rule Title
+      description: A concise name for the detection rule
+      placeholder: "Rapid Account Creation from Single IP"
+    validations:
+      required: true
+
+  - type: input
+    id: threat-path-id
+    attributes:
+      label: Linked Threat Path ID
+      description: The FLAME threat path ID this rule detects (from flame-fraud taxonomy)
+      placeholder: "TP-XXXX"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sigma-compatible
+    attributes:
+      label: Sigma Compatible?
+      description: Can this rule be expressed as pure Sigma (no stateful correlation)?
+      options:
+        - "yes"
+        - "no"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: The severity of the threat this rule detects
+      options:
+        - critical
+        - high
+        - medium
+        - low
+        - informational
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe what this rule detects and why it matters
+      placeholder: "This rule detects..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: detection-logic
+    attributes:
+      label: Detection Logic (YAML)
+      description: Paste the full detection rule YAML
+      render: yaml
+      placeholder: |
+        title: Rapid Account Creation from Single IP
+        sigma_compatible: true
+        status: experimental
+        level: high
+        threat_paths:
+          - TP-0042
+        detection:
+          selection:
+            event.category: account_creation
+          condition: selection | count() by source.ip > 10
+        falsepositives:
+          - Onboarding batch processes
+        references:
+          - https://example.com/research
+    validations:
+      required: true
+
+  - type: textarea
+    id: false-positives
+    attributes:
+      label: False Positives
+      description: Known scenarios that could trigger this rule without malicious activity
+      placeholder: |
+        - Legitimate bulk operations by admin teams
+        - Scheduled batch jobs
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links to research, blog posts, or documentation supporting this detection
+      placeholder: |
+        - https://example.com/research
+        - https://attack.mitre.org/techniques/TXXXX/
+    validations:
+      required: true
